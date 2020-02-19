@@ -8,3 +8,9 @@ edition = "2018"
 
 [dependencies]
 winit = "0.21.0"
+
+[dependencies.winapi]
+version = "0.3.8"
+features = [
+    "commctrl",
+]
