@@ -2,7 +2,7 @@ use {
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
-        window::WindowBuilder,
+        window::{Window, WindowBuilder},
         platform::windows::{WindowExtWindows, WindowBuilderExtWindows},
     },
     winapi::{
@@ -34,13 +34,7 @@ fn main() {
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
         .unwrap();
-    unsafe {
-        let h_wnd = window.hwnd() as _;
-        SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), 0, 0);
-
-        extend_frame(h_wnd);
-        frame_change(h_wnd);
-    }
+    subclass_winit_window(&window);
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
@@ -54,6 +48,20 @@ fn main() {
             _ => (),
         }
     });
+}
+
+fn subclass_winit_window(window: &Window) {
+    let h_wnd = window.hwnd() as _;
+    subclass_window(h_wnd);
+}
+
+fn subclass_window(h_wnd: HWND) {
+    unsafe {
+        SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), 0, 0);
+
+        extend_frame(h_wnd);
+        frame_change(h_wnd);
+    }
 }
 
 //
@@ -88,7 +96,6 @@ const LEFTEXTENDWIDTH: i32 = 0;
 const RIGHTEXTENDWIDTH: i32 = 0;
 const BOTTOMEXTENDWIDTH: i32 = 0;
 const TOPEXTENDWIDTH: i32 = 31;
-
 
 unsafe fn frame_change(h_wnd: HWND) {
     let mut rc_client = RECT {
