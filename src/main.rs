@@ -29,6 +29,7 @@ use {
 fn main() {
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
+        .with_visible(false)
         .with_transparent(true)
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
@@ -40,6 +41,7 @@ fn main() {
         extend_frame(hWnd);
         frame_change(hWnd);
     }
+    window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
