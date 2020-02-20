@@ -1,9 +1,7 @@
 use {
     winit::{
-        event::{Event, WindowEvent},
-        event_loop::{ControlFlow, EventLoop},
-        window::{Window, WindowBuilder},
-        platform::windows::{WindowExtWindows, WindowBuilderExtWindows},
+        window::Window,
+        platform::windows::WindowExtWindows,
     },
     winapi::{
         shared::{
@@ -26,36 +24,12 @@ use {
     },
 };
 
-fn main() {
-    let event_loop = EventLoop::new();
-    let window = WindowBuilder::new()
-        .with_visible(false)
-        .with_transparent(true)
-        // .with_no_redirection_bitmap(true)
-        .build(&event_loop)
-        .unwrap();
-    subclass_winit_window(&window);
-    window.set_visible(true);
-
-    event_loop.run(move |event, _, control_flow| {
-        *control_flow = ControlFlow::Wait;
-
-        match event {
-            Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
-                window_id,
-            } if window_id == window.id() => *control_flow = ControlFlow::Exit,
-            _ => (),
-        }
-    });
-}
-
-fn subclass_winit_window(window: &Window) {
+pub fn subclass_winit_window(window: &Window) {
     let h_wnd = window.hwnd() as _;
     subclass_window(h_wnd);
 }
 
-fn subclass_window(h_wnd: HWND) {
+pub fn subclass_window(h_wnd: HWND) {
     unsafe {
         SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), 0, 0);
 
