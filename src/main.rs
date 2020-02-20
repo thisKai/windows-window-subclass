@@ -35,11 +35,11 @@ fn main() {
         .build(&event_loop)
         .unwrap();
     unsafe {
-        let hWnd = window.hwnd() as _;
-        SetWindowSubclass(hWnd, Some(subclass_wnd_proc), 0, 0);
+        let h_wnd = window.hwnd() as _;
+        SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), 0, 0);
 
-        extend_frame(hWnd);
-        frame_change(hWnd);
+        extend_frame(h_wnd);
+        frame_change(h_wnd);
     }
     window.set_visible(true);
 
@@ -56,42 +56,32 @@ fn main() {
     });
 }
 
+//
+//  Subclass WinProc.
+//
 unsafe extern "system" fn subclass_wnd_proc(
-    hWnd: HWND,
-    uMsg: UINT,
-    wParam: WPARAM,
-    lParam: LPARAM,
-    uIdSubclass: UINT_PTR,
-    dwRefData: DWORD_PTR,
-) -> LRESULT {
-    wnd_proc(hWnd, uMsg, wParam, lParam)
-}
-
-//
-//  Main WinProc.
-//
-pub unsafe extern "system" fn wnd_proc(
     h_wnd: HWND,
     message: UINT,
     w_param: WPARAM,
     l_param: LPARAM,
+    _u_id_subclass: UINT_PTR,
+    _dw_ref_data: DWORD_PTR,
 ) -> LRESULT {
-    let mut fCallDWP = true;
-    let mut fDwmEnabled = FALSE;
-    let mut lRet = 0;
-    let mut hr = S_OK;
+    let mut f_call_dwp = true;
+    let mut f_dwm_enabled = FALSE;
+    let mut l_ret = 0;
 
     // Winproc worker for custom frame issues.
-    hr = DwmIsCompositionEnabled(&mut fDwmEnabled);
+    let hr = DwmIsCompositionEnabled(&mut f_dwm_enabled);
     if SUCCEEDED(hr) {
-        lRet = CustomCaptionProc(h_wnd, message, w_param, l_param, &mut fCallDWP);
+        l_ret = custom_caption_proc(h_wnd, message, w_param, l_param, &mut f_call_dwp);
     }
 
     // Winproc worker for the rest of the application.
-    if fCallDWP {
-        lRet = DefSubclassProc(h_wnd, message, w_param, l_param);
+    if f_call_dwp {
+        l_ret = DefSubclassProc(h_wnd, message, w_param, l_param);
     }
-    lRet
+    l_ret
 }
 
 const LEFTEXTENDWIDTH: i32 = 0;
@@ -100,25 +90,25 @@ const BOTTOMEXTENDWIDTH: i32 = 0;
 const TOPEXTENDWIDTH: i32 = 31;
 
 
-unsafe fn frame_change(hWnd: HWND) {
-    let mut rcClient = RECT {
+unsafe fn frame_change(h_wnd: HWND) {
+    let mut rc_client = RECT {
         left: 0,
         top: 0,
         right: 0,
         bottom: 0,
     };
-    GetWindowRect(hWnd, &mut rcClient);
+    GetWindowRect(h_wnd, &mut rc_client);
 
     // Inform application of the frame change.
-    SetWindowPos(hWnd,
+    SetWindowPos(h_wnd,
                  NULL as _,
-                 rcClient.left, rcClient.top,
-                 rcClient.right - rcClient.left,
-                 rcClient.bottom - rcClient.top,
+                 rc_client.left, rc_client.top,
+                 rc_client.right - rc_client.left,
+                 rc_client.bottom - rc_client.top,
                  SWP_FRAMECHANGED);
 }
 
-unsafe fn extend_frame(hWnd: HWND) {
+unsafe fn extend_frame(h_wnd: HWND) {
     // Extend the frame into the client area.
     let margins = MARGINS {
         cxLeftWidth: LEFTEXTENDWIDTH,
@@ -127,7 +117,7 @@ unsafe fn extend_frame(hWnd: HWND) {
         cyTopHeight: TOPEXTENDWIDTH,
     };
 
-    let hr = DwmExtendFrameIntoClientArea(hWnd, &margins);
+    let hr = DwmExtendFrameIntoClientArea(h_wnd, &margins);
 
     if !SUCCEEDED(hr) {
         // Handle error.
@@ -136,79 +126,78 @@ unsafe fn extend_frame(hWnd: HWND) {
 //
 // Message handler for handling the custom caption messages.
 //
-unsafe fn CustomCaptionProc(
-    hWnd: HWND,
+unsafe fn custom_caption_proc(
+    h_wnd: HWND,
     message: UINT,
-    wParam: WPARAM,
-    lParam: LPARAM,
-    pfCallDWP: &mut bool,
+    w_param: WPARAM,
+    l_param: LPARAM,
+    pf_call_dwp: &mut bool,
 ) -> LRESULT{
-    let mut lRet = 0;
-    let mut hr = S_OK;
-    let mut fCallDWP = true; // Pass on to DefWindowProc?
+    let mut l_ret = 0;
+    let mut f_call_dwp = true; // Pass on to DefWindowProc?
 
-    fCallDWP = DwmDefWindowProc(hWnd, message, wParam, lParam, &mut lRet) != TRUE;
+    f_call_dwp = DwmDefWindowProc(h_wnd, message, w_param, l_param, &mut l_ret) != TRUE;
 
     // Handle window creation.
     if message == WM_CREATE {
-        frame_change(hWnd);
+        frame_change(h_wnd);
 
-        fCallDWP = true;
-        lRet = 0;
+        f_call_dwp = true;
+        l_ret = 0;
     }
 
     // Handle window activation.
     if message == WM_ACTIVATE {
         // Extend the frame into the client area.
-        extend_frame(hWnd);
+        extend_frame(h_wnd);
 
-        fCallDWP = true;
-        lRet = 0;
+        f_call_dwp = true;
+        l_ret = 0;
     }
 
     // if (message == WM_PAINT) {
     //     HDC hdc;
     //     {
     //         PAINTSTRUCT ps;
-    //         hdc = BeginPaint(hWnd, &ps);
-    //         PaintCustomCaption(hWnd, hdc);
-    //         EndPaint(hWnd, &ps);
+    //         hdc = BeginPaint(h_wnd, &ps);
+    //         PaintCustomCaption(h_wnd, hdc);
+    //         EndPaint(h_wnd, &ps);
     //     }
 
-    //     fCallDWP = true;
-    //     lRet = 0;
+    //     f_call_dwp = true;
+    //     l_ret = 0;
     // }
 
     // Handle the non-client size message.
-    if message == WM_NCCALCSIZE && wParam as BOOL == TRUE {
+    if message == WM_NCCALCSIZE && w_param as BOOL == TRUE {
         // Calculate new NCCALCSIZE_PARAMS based on custom NCA inset.
-        // NCCALCSIZE_PARAMS *pncsp = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
-        let pncsp = &mut *(lParam as *mut NCCALCSIZE_PARAMS);
+        // NCCALCSIZE_PARAMS *pncsp = reinterpret_cast<NCCALCSIZE_PARAMS*>(l_param);
+        let pncsp = &mut *(l_param as *mut NCCALCSIZE_PARAMS);
 
         pncsp.rgrc[0].left   -= 0;
         pncsp.rgrc[0].top    -= 31;
         pncsp.rgrc[0].right  += 0;
         pncsp.rgrc[0].bottom += 0;
 
-        lRet = 0;
+        l_ret = 0;
 
         // No need to pass the message on to the DefWindowProc.
-        // fCallDWP = false;
+        // f_call_dwp = false;
     }
 
     // Handle hit testing in the NCA if not handled by DwmDefWindowProc.
-    if message == WM_NCHITTEST && lRet == 0 {
-        lRet = match DefSubclassProc(hWnd, message, wParam, lParam) {
+    if message == WM_NCHITTEST && l_ret == 0 {
+        l_ret = match DefSubclassProc(h_wnd, message, w_param, l_param) {
             HTCLIENT => HTCAPTION,
             ret => ret,
         };
 
-        if lRet != HTNOWHERE {
-            fCallDWP = false;
+        if l_ret != HTNOWHERE {
+            f_call_dwp = false;
         }
     }
 
-    *pfCallDWP = fCallDWP;
+    *pf_call_dwp = f_call_dwp;
 
-    lRet
+    l_ret
 }
