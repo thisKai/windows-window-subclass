@@ -10,7 +10,7 @@ edition = "2018"
 default = ["winit"]
 
 [dependencies]
-winit = { version = "0.21.0", optional = true }
+winit = { version = "*", optional = true }
 
 [target.'cfg(windows)'.dependencies.winapi]
 version = "0.3.8"
