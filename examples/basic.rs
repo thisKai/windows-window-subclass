@@ -4,7 +4,6 @@ use {
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
         window::{WindowBuilder},
-        platform::windows::WindowBuilderExtWindows,
     },
 };
 
