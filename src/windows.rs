@@ -62,14 +62,19 @@ const RIGHTEXTENDWIDTH: i32 = 0;
 const BOTTOMEXTENDWIDTH: i32 = 0;
 const TOPEXTENDWIDTH: i32 = 31;
 
-unsafe fn frame_change(h_wnd: HWND) {
-    let mut rc_client = RECT {
+unsafe fn window_rect(h_wnd: HWND) {
+    let mut rect = RECT {
         left: 0,
         top: 0,
         right: 0,
         bottom: 0,
     };
-    GetWindowRect(h_wnd, &mut rc_client);
+    GetWindowRect(h_wnd, &mut rect);
+    rect
+}
+
+unsafe fn frame_change(h_wnd: HWND) {
+    let mut rc_client = window_rect();
 
     // Inform application of the frame change.
     SetWindowPos(h_wnd,
