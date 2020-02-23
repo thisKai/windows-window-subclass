@@ -20,7 +20,7 @@ use {
     },
 };
 
-pub fn subclass_window(h_wnd: HWND) {
+pub fn subclass_win32_window(h_wnd: HWND) {
     unsafe {
         SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), 0, 0);
 
@@ -62,7 +62,7 @@ const RIGHTEXTENDWIDTH: i32 = 0;
 const BOTTOMEXTENDWIDTH: i32 = 0;
 const TOPEXTENDWIDTH: i32 = 31;
 
-unsafe fn window_rect(h_wnd: HWND) {
+unsafe fn window_rect(h_wnd: HWND) -> RECT {
     let mut rect = RECT {
         left: 0,
         top: 0,
@@ -74,7 +74,7 @@ unsafe fn window_rect(h_wnd: HWND) {
 }
 
 unsafe fn frame_change(h_wnd: HWND) {
-    let mut rc_client = window_rect();
+    let mut rc_client = window_rect(h_wnd);
 
     // Inform application of the frame change.
     SetWindowPos(h_wnd,

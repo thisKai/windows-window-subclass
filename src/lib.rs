@@ -2,13 +2,19 @@
 mod windows;
 
 #[cfg(windows)]
-pub use windows::subclass_window;
+pub use windows::subclass_win32_window;
+use raw_window_handle::{
+    RawWindowHandle, 
+    HasRawWindowHandle,
+    windows::WindowsHandle,
+};
 
-#[cfg(all(windows, feature = "winit"))]
-pub fn subclass_winit_window(window: &winit::window::Window) {
-    use winit::platform::windows::WindowExtWindows;
 
-    subclass_window(window.hwnd() as _);
+pub fn subclass_window<W: HasRawWindowHandle>(window: &W) {
+    #[cfg(windows)]
+    {
+        if let RawWindowHandle::Windows(WindowsHandle { hwnd, .. }) = window.raw_window_handle() {
+            subclass_win32_window(hwnd as _);
+        }
+    }
 }
-#[cfg(all(not(windows), feature = "winit"))]
-pub fn subclass_winit_window(window: &winit::window::Window) {}

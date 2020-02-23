@@ -1,5 +1,5 @@
 use {
-    winit_windows_custom_window::subclass_winit_window,
+    winit_windows_custom_window::subclass_window,
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
@@ -16,7 +16,7 @@ fn main() {
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
         .unwrap();
-    subclass_winit_window(&window);
+    subclass_window(&window);
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
