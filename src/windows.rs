@@ -6,6 +6,7 @@ use {
             ntdef::NULL,
             minwindef::*,
             windef::*,
+            windowsx::*,
         },
         um::{
             winuser::*,
@@ -71,6 +72,24 @@ unsafe fn window_rect(h_wnd: HWND) -> RECT {
     };
     GetWindowRect(h_wnd, &mut rect);
     rect
+}
+
+unsafe fn window_frame_rect() -> RECT {
+    let mut rect = RECT {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+    };
+    AdjustWindowRectEx(&mut rect, WS_OVERLAPPEDWINDOW & !WS_CAPTION, FALSE, NULL as _);
+    rect
+}
+
+unsafe fn pointer_location(l_param: LPARAM) -> POINT {
+    POINT { 
+        x: GET_X_LPARAM(l_param), 
+        y: GET_Y_LPARAM(l_param),
+    }
 }
 
 unsafe fn frame_change(h_wnd: HWND) {
@@ -165,7 +184,7 @@ unsafe fn custom_caption_proc(
     // Handle hit testing in the NCA if not handled by DwmDefWindowProc.
     if message == WM_NCHITTEST && l_ret == 0 {
         l_ret = match DefSubclassProc(h_wnd, message, w_param, l_param) {
-            HTCLIENT => HTCAPTION,
+            HTCLIENT => hit_test(h_wnd, l_param),
             ret => ret,
         };
 
@@ -177,4 +196,20 @@ unsafe fn custom_caption_proc(
     *pf_call_dwp = f_call_dwp;
 
     l_ret
+}
+
+unsafe fn hit_test(h_wnd: HWND, l_param: LPARAM) -> LRESULT {
+    let mut window = window_rect(h_wnd);
+    let frame = window_frame_rect();
+    let POINT { x, y } = pointer_location(l_param);
+
+    if y >= window.top && y < window.top + TOPEXTENDWIDTH {
+        if y < (window.top - frame.top) {
+            HTTOP
+        } else {
+            HTCAPTION
+        }
+    } else {
+        HTCLIENT
+    }
 }
