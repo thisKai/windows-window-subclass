@@ -165,7 +165,9 @@ unsafe fn custom_caption_proc(
     // }
 
     // Handle the non-client size message.
-    if message == WM_NCCALCSIZE && w_param as BOOL == TRUE {
+    if message == WM_NCCALCSIZE {
+        match w_param as BOOL {
+            TRUE => {
         // Calculate new NCCALCSIZE_PARAMS based on custom NCA inset.
         // NCCALCSIZE_PARAMS *pncsp = reinterpret_cast<NCCALCSIZE_PARAMS*>(l_param);
         let pncsp = &mut *(l_param as *mut NCCALCSIZE_PARAMS);
@@ -175,10 +177,25 @@ unsafe fn custom_caption_proc(
         pncsp.rgrc[0].right  += 0;
         pncsp.rgrc[0].bottom += 0;
 
-        l_ret = 0;
+                l_ret = WVR_VALIDRECTS;
 
         // No need to pass the message on to the DefWindowProc.
         // f_call_dwp = false;
+    }
+            FALSE => {
+                let rc = l_param as *mut RECT;
+                let rc = &mut *rc;
+                let rc_window = window_rect(h_wnd);
+                CopyRect(rc, &rc_window);
+                rc.left += 0;
+                rc.top += 31;
+                rc.right -= 0;
+                rc.bottom -= 0;
+
+                l_ret = 0;
+            }
+            _ => {}
+        }
     }
 
     // Handle hit testing in the NCA if not handled by DwmDefWindowProc.
