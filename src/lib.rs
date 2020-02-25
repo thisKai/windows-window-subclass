@@ -2,7 +2,7 @@
 mod windows;
 
 #[cfg(windows)]
-pub use windows::subclass_win32_window;
+pub use windows::{subclass_win32_window, Options};
 use raw_window_handle::HasRawWindowHandle;
 
 
@@ -14,7 +14,7 @@ pub fn subclass_window<W: HasRawWindowHandle>(window: &W) {
             windows::WindowsHandle,
         };
         if let RawWindowHandle::Windows(WindowsHandle { hwnd, .. }) = window.raw_window_handle() {
-            subclass_win32_window(hwnd as _);
+            subclass_win32_window(hwnd as _, Options::default());
         }
     }
 }
