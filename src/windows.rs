@@ -86,14 +86,14 @@ unsafe fn window_frame_rect() -> RECT {
 }
 
 unsafe fn pointer_location(l_param: LPARAM) -> POINT {
-    POINT { 
-        x: GET_X_LPARAM(l_param), 
+    POINT {
+        x: GET_X_LPARAM(l_param),
         y: GET_Y_LPARAM(l_param),
     }
 }
 
 unsafe fn frame_change(h_wnd: HWND) {
-    let mut rc_client = window_rect(h_wnd);
+    let rc_client = window_rect(h_wnd);
 
     // Inform application of the frame change.
     SetWindowPos(h_wnd,
@@ -130,9 +130,9 @@ unsafe fn custom_caption_proc(
     pf_call_dwp: &mut bool,
 ) -> LRESULT{
     let mut l_ret = 0;
-    let mut f_call_dwp = true; // Pass on to DefWindowProc?
 
-    f_call_dwp = DwmDefWindowProc(h_wnd, message, w_param, l_param, &mut l_ret) != TRUE;
+    // Pass on to DefWindowProc?
+    let mut f_call_dwp = DwmDefWindowProc(h_wnd, message, w_param, l_param, &mut l_ret) != TRUE;
 
     // Handle window creation.
     if message == WM_CREATE {
@@ -199,9 +199,9 @@ unsafe fn custom_caption_proc(
 }
 
 unsafe fn hit_test(h_wnd: HWND, l_param: LPARAM) -> LRESULT {
-    let mut window = window_rect(h_wnd);
+    let window = window_rect(h_wnd);
     let frame = window_frame_rect();
-    let POINT { x, y } = pointer_location(l_param);
+    let POINT { y, .. } = pointer_location(l_param);
 
     if y >= window.top && y < window.top + TOPEXTENDWIDTH {
         if y < (window.top - frame.top) {
