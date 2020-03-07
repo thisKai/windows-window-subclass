@@ -39,7 +39,7 @@ impl ExtendFrame {
         self.margins.set(margins);
         unsafe {
             extend_frame(
-                self.h_wnd.get().unwrap(), 
+                self.h_wnd.get().unwrap(),
                 &self.margins.get().winapi(),
             );
         }
@@ -101,7 +101,7 @@ impl Margins {
             bottom: -1,
         }
     }
-    fn winapi(&self) -> MARGINS {
+    pub(crate) fn winapi(&self) -> MARGINS {
         MARGINS {
             cxLeftWidth: self.left,
             cxRightWidth: self.right,

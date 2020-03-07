@@ -4,6 +4,8 @@ mod subclass;
 mod custom_window;
 #[cfg(feature = "unstable")]
 mod extend_frame;
+#[cfg(feature = "unstable")]
+mod client_area;
 
 #[cfg(windows)]
 pub use subclass::subclass_win32_window;
@@ -11,6 +13,7 @@ pub use subclass::subclass_win32_window;
 pub use {
     custom_window::CustomWindow,
     extend_frame::{ExtendFrame, Margins},
+    client_area::ClientArea,
 };
 
 use std::ops::Deref;
@@ -64,4 +67,3 @@ pub fn subclass_window<W: HasRawWindowHandle, S: WindowSubclass>(window: &W, sub
         }
     }
 }
-
