@@ -15,7 +15,7 @@ fn main() {
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
         .unwrap();
-    subclass_window(&window, ExtendFrame::default());
+    subclass_window(&window, ExtendFrame::sheet());
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
