@@ -21,6 +21,23 @@ use {
     },
 };
 
+pub trait WindowSubclass {
+    fn subclass_wnd_proc(
+        &mut self,
+        h_wnd: HWND,
+        message: UINT,
+        w_param: WPARAM,
+        l_param: LPARAM,
+        u_id_subclass: UINT_PTR,
+    ) -> LRESULT;
+}
+pub fn apply_subclass<S: WindowSubclass>(h_wnd: HWND, subclass: S) {
+    let data = Box::new(subclass);
+    unsafe {
+        SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), 0, data as _);
+    }
+}
+
 pub struct Options {
     margins: MARGINS,
 }
