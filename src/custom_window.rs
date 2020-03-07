@@ -1,33 +1,33 @@
+use super::WindowSubclass;
 #[cfg(windows)]
-use {
-    super::WindowSubclass,
-    winapi::{
-        shared::{
-            winerror::*,
-            ntdef::NULL,
-            minwindef::*,
-            windef::*,
-            windowsx::*,
-        },
-        um::{
-            winuser::*,
-            commctrl::{DefSubclassProc},
-            uxtheme::MARGINS,
-            dwmapi::{
-                DwmDefWindowProc,
-                DwmIsCompositionEnabled,
-                DwmExtendFrameIntoClientArea,
-            },
+use winapi::{
+    shared::{
+        winerror::*,
+        ntdef::NULL,
+        minwindef::*,
+        windef::*,
+        windowsx::*,
+    },
+    um::{
+        winuser::*,
+        commctrl::{DefSubclassProc},
+        uxtheme::MARGINS,
+        dwmapi::{
+            DwmDefWindowProc,
+            DwmIsCompositionEnabled,
+            DwmExtendFrameIntoClientArea,
         },
     },
 };
 
 pub struct CustomWindow {
+    #[cfg(windows)]
     margins: MARGINS,
 }
 impl Default for CustomWindow {
     fn default() -> Self {
         CustomWindow {
+            #[cfg(windows)]
             margins: MARGINS {
                 cxLeftWidth: 0,
                 cxRightWidth: 0,
@@ -38,6 +38,7 @@ impl Default for CustomWindow {
     }
 }
 impl WindowSubclass for CustomWindow {
+    #[cfg(windows)]
     fn wnd_proc(
         &mut self,
         h_wnd: HWND,
@@ -69,7 +70,7 @@ impl WindowSubclass for CustomWindow {
             l_ret
         }
     }
-    
+    #[cfg(windows)]
     fn init(&mut self, h_wnd: HWND) {
         unsafe {
             extend_frame(h_wnd, &self.margins);
@@ -77,6 +78,7 @@ impl WindowSubclass for CustomWindow {
         }
     }
 }
+#[cfg(windows)]
 impl CustomWindow {
     //
     // Message handler for handling the custom caption messages.
@@ -193,6 +195,7 @@ impl CustomWindow {
     }
 }
 
+#[cfg(windows)]
 unsafe fn window_rect(h_wnd: HWND) -> RECT {
     let mut rect = RECT {
         left: 0,
@@ -204,6 +207,7 @@ unsafe fn window_rect(h_wnd: HWND) -> RECT {
     rect
 }
 
+#[cfg(windows)]
 unsafe fn window_frame_rect() -> RECT {
     let mut rect = RECT {
         left: 0,
@@ -215,6 +219,7 @@ unsafe fn window_frame_rect() -> RECT {
     rect
 }
 
+#[cfg(windows)]
 unsafe fn pointer_location(l_param: LPARAM) -> POINT {
     POINT {
         x: GET_X_LPARAM(l_param),
@@ -222,6 +227,7 @@ unsafe fn pointer_location(l_param: LPARAM) -> POINT {
     }
 }
 
+#[cfg(windows)]
 unsafe fn frame_change(h_wnd: HWND) {
     let rc_client = window_rect(h_wnd);
 
@@ -234,6 +240,7 @@ unsafe fn frame_change(h_wnd: HWND) {
                  SWP_FRAMECHANGED);
 }
 
+#[cfg(windows)]
 unsafe fn extend_frame(h_wnd: HWND, margins: &MARGINS) {
     // Extend the frame into the client area.
     let hr = DwmExtendFrameIntoClientArea(h_wnd, margins);
