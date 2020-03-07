@@ -1,12 +1,13 @@
 #[cfg(windows)]
 mod subclass;
+#[cfg(feature = "unstable")]
 mod custom_window;
 
 #[cfg(windows)]
-pub use {
-    subclass::subclass_win32_window,
-    custom_window::CustomWindow,
-};
+pub use subclass::subclass_win32_window;
+#[cfg(feature = "unstable")]
+pub use custom_window::CustomWindow;
+
 #[cfg(windows)]
 use {
     winapi::shared::{
