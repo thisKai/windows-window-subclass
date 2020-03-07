@@ -18,7 +18,7 @@ use raw_window_handle::HasRawWindowHandle;
 
 pub trait WindowSubclass {
     #[cfg(windows)]
-    unsafe fn wnd_proc(
+    fn wnd_proc(
         &mut self,
         h_wnd: HWND,
         message: UINT,
@@ -26,7 +26,7 @@ pub trait WindowSubclass {
         l_param: LPARAM,
     ) -> LRESULT;
     #[cfg(windows)]
-    unsafe fn init(&mut self, h_wnd: HWND) {}
+    fn init(&mut self, h_wnd: HWND) {}
 }
 
 pub fn subclass_window<W: HasRawWindowHandle, S: WindowSubclass>(window: &W, subclass: S) {

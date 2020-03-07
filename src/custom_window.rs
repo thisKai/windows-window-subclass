@@ -11,7 +11,7 @@ use {
         },
         um::{
             winuser::*,
-            commctrl::DefSubclassProc,
+            commctrl::{DefSubclassProc},
             uxtheme::MARGINS,
             dwmapi::{
                 DwmDefWindowProc,
@@ -38,39 +38,43 @@ impl Default for CustomWindow {
     }
 }
 impl WindowSubclass for CustomWindow {
-    unsafe fn wnd_proc(
+    fn wnd_proc(
         &mut self,
         h_wnd: HWND,
         message: UINT,
         w_param: WPARAM,
         l_param: LPARAM,
     ) -> LRESULT {
-        let mut f_call_dwp = true;
-        let mut f_dwm_enabled = FALSE;
-        let mut l_ret = 0;
-    
-        // Winproc worker for custom frame issues.
-        let hr = DwmIsCompositionEnabled(&mut f_dwm_enabled);
-        if SUCCEEDED(hr) {
-            l_ret = self.custom_caption_proc(
-                h_wnd,
-                message,
-                w_param,
-                l_param,
-                &mut f_call_dwp,
-            );
+        unsafe {
+            let mut f_call_dwp = true;
+            let mut f_dwm_enabled = FALSE;
+            let mut l_ret = 0;
+        
+            // Winproc worker for custom frame issues.
+            let hr = DwmIsCompositionEnabled(&mut f_dwm_enabled);
+            if SUCCEEDED(hr) {
+                l_ret = self.custom_caption_proc(
+                    h_wnd,
+                    message,
+                    w_param,
+                    l_param,
+                    &mut f_call_dwp,
+                );
+            }
+        
+            // Winproc worker for the rest of the application.
+            if f_call_dwp {
+                l_ret = DefSubclassProc(h_wnd, message, w_param, l_param);
+            }
+            l_ret
         }
-    
-        // Winproc worker for the rest of the application.
-        if f_call_dwp {
-            l_ret = DefSubclassProc(h_wnd, message, w_param, l_param);
-        }
-        l_ret
     }
     
-    unsafe fn init(&mut self, h_wnd: HWND) {
-        extend_frame(h_wnd, &self.margins);
-        frame_change(h_wnd);
+    fn init(&mut self, h_wnd: HWND) {
+        unsafe {
+            extend_frame(h_wnd, &self.margins);
+            frame_change(h_wnd);
+        }
     }
 }
 impl CustomWindow {
