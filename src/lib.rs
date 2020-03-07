@@ -10,9 +10,10 @@ pub use subclass::subclass_win32_window;
 #[cfg(feature = "unstable")]
 pub use {
     custom_window::CustomWindow,
-    extend_frame::ExtendFrame,
+    extend_frame::{ExtendFrame, Margins},
 };
 
+use std::ops::Deref;
 #[cfg(windows)]
 use {
     winapi::shared::{
@@ -25,14 +26,30 @@ use raw_window_handle::HasRawWindowHandle;
 pub trait WindowSubclass {
     #[cfg(windows)]
     fn wnd_proc(
-        &mut self,
+        &self,
         h_wnd: HWND,
         message: UINT,
         w_param: WPARAM,
         l_param: LPARAM,
     ) -> LRESULT;
     #[cfg(windows)]
-    fn init(&mut self, h_wnd: HWND) {}
+    fn init(&self, h_wnd: HWND) {}
+}
+impl<T: Deref> WindowSubclass for T where T::Target: WindowSubclass {
+    #[cfg(windows)]
+    fn wnd_proc(
+        &self,
+        h_wnd: HWND,
+        message: UINT,
+        w_param: WPARAM,
+        l_param: LPARAM,
+    ) -> LRESULT {
+        self.deref().wnd_proc(h_wnd, message, w_param, l_param)
+    }
+    #[cfg(windows)]
+    fn init(&self, h_wnd: HWND) {
+        self.deref().init(h_wnd)
+    }
 }
 
 pub fn subclass_window<W: HasRawWindowHandle, S: WindowSubclass>(window: &W, subclass: S) {

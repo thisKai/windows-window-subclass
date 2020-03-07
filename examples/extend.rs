@@ -1,5 +1,6 @@
 use {
-    windows_custom_window::{subclass_window, ExtendFrame},
+    windows_custom_window::{subclass_window, ExtendFrame, Margins},
+    std::rc::Rc,
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
@@ -15,7 +16,8 @@ fn main() {
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
         .unwrap();
-    subclass_window(&window, ExtendFrame::sheet());
+    let subclass = Rc::new(ExtendFrame::sheet());
+    subclass_window(&window, subclass.clone());
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
@@ -23,9 +25,24 @@ fn main() {
 
         match event {
             Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
+                event,
                 window_id,
-            } if window_id == window.id() => *control_flow = ControlFlow::Exit,
+            } if window_id == window.id() => match event {
+                WindowEvent::CloseRequested => {
+                    *control_flow = ControlFlow::Exit
+                },
+                WindowEvent::Focused(focused) => {
+                    if focused {
+                        subclass.set_margins(Margins::sheet());
+                    } else {
+                        subclass.set_margins(Margins {
+                            top: 100,
+                            ..Default::default()
+                        });
+                    }
+                }
+                _ => (),
+            }
             _ => (),
         }
     });

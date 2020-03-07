@@ -40,7 +40,7 @@ impl Default for CustomWindow {
 impl WindowSubclass for CustomWindow {
     #[cfg(windows)]
     fn wnd_proc(
-        &mut self,
+        &self,
         h_wnd: HWND,
         message: UINT,
         w_param: WPARAM,
@@ -71,7 +71,7 @@ impl WindowSubclass for CustomWindow {
         }
     }
     #[cfg(windows)]
-    fn init(&mut self, h_wnd: HWND) {
+    fn init(&self, h_wnd: HWND) {
         unsafe {
             extend_frame(h_wnd, &self.margins);
             frame_change(h_wnd);

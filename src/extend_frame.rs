@@ -1,4 +1,7 @@
-use super::WindowSubclass;
+use {
+    super::WindowSubclass,
+    std::cell::Cell,
+};
 #[cfg(windows)]
 use winapi::{
     shared::{
@@ -19,33 +22,33 @@ use winapi::{
 
 #[derive(Default)]
 pub struct ExtendFrame {
-    pub left: i32,
-    pub top: i32,
-    pub right: i32,
-    pub bottom: i32,
+    h_wnd: Cell<Option<HWND>>,
+    margins: Cell<Margins>,
 }
 impl ExtendFrame {
-    pub fn sheet() -> Self {
+    pub fn margins(margins: Margins) -> Self {
         Self {
-            left: -1,
-            top: -1,
-            right: -1,
-            bottom: -1,
+            h_wnd: Cell::new(None),
+            margins: Cell::new(margins),
         }
     }
-    fn margins(&self) -> MARGINS {
-        MARGINS {
-            cxLeftWidth: self.left,
-            cxRightWidth: self.right,
-            cyBottomHeight: self.bottom,
-            cyTopHeight: self.top,
+    pub fn sheet() -> Self {
+        Self::margins(Margins::sheet())
+    }
+    pub fn set_margins(&self, margins: Margins) {
+        self.margins.set(margins);
+        unsafe {
+            extend_frame(
+                self.h_wnd.get().unwrap(), 
+                &self.margins.get().winapi(),
+            );
         }
     }
 }
 impl WindowSubclass for ExtendFrame {
     #[cfg(windows)]
     fn wnd_proc(
-        &mut self,
+        &self,
         h_wnd: HWND,
         message: UINT,
         w_param: WPARAM,
@@ -58,15 +61,16 @@ impl WindowSubclass for ExtendFrame {
             // Handle window activation if dwm is enabled
             if message == WM_ACTIVATE && SUCCEEDED(hr) && f_dwm_enabled == TRUE {
                 // Extend the frame into the client area.
-                extend_frame(h_wnd, &self.margins());
+                extend_frame(h_wnd, &self.margins.get().winapi());
             }
             DefSubclassProc(h_wnd, message, w_param, l_param)
         }
     }
     #[cfg(windows)]
-    fn init(&mut self, h_wnd: HWND) {
+    fn init(&self, h_wnd: HWND) {
+        self.h_wnd.set(Some(h_wnd));
         unsafe {
-            extend_frame(h_wnd, &self.margins());
+            extend_frame(h_wnd, &self.margins.get().winapi());
         }
     }
 }
@@ -78,5 +82,31 @@ unsafe fn extend_frame(h_wnd: HWND, margins: &MARGINS) {
 
     if !SUCCEEDED(hr) {
         // Handle error.
+    }
+}
+
+#[derive(Default, Copy, Clone)]
+pub struct Margins {
+    pub left: i32,
+    pub top: i32,
+    pub right: i32,
+    pub bottom: i32,
+}
+impl Margins {
+    pub fn sheet() -> Self {
+        Self {
+            left: -1,
+            top: -1,
+            right: -1,
+            bottom: -1,
+        }
+    }
+    fn winapi(&self) -> MARGINS {
+        MARGINS {
+            cxLeftWidth: self.left,
+            cxRightWidth: self.right,
+            cyBottomHeight: self.bottom,
+            cyTopHeight: self.top,
+        }
     }
 }
