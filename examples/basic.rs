@@ -1,5 +1,5 @@
 use {
-    winit_windows_custom_window::subclass_window,
+    windows_custom_window::subclass_window,
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
