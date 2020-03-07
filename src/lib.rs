@@ -2,11 +2,16 @@
 mod subclass;
 #[cfg(feature = "unstable")]
 mod custom_window;
+#[cfg(feature = "unstable")]
+mod extend_frame;
 
 #[cfg(windows)]
 pub use subclass::subclass_win32_window;
 #[cfg(feature = "unstable")]
-pub use custom_window::CustomWindow;
+pub use {
+    custom_window::CustomWindow,
+    extend_frame::ExtendFrame,
+};
 
 #[cfg(windows)]
 use {
