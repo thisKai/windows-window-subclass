@@ -15,7 +15,10 @@ fn main() {
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
         .unwrap()
-        .with_subclass(ExtendFrame::sheet())
+        .with_subclass(ExtendFrame::margins(Margins {
+            top: 31,
+            ..Default::default()
+        }))
         .with_subclass(ClientArea::margins(Margins {
             top: 31,
             ..Default::default()
