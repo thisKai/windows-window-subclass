@@ -76,7 +76,7 @@ impl WindowSubclass for ClientArea {
                         rc.right -= margins.right;
                         rc.bottom -= margins.bottom;
 
-                        return 0;
+                        // return 0;
                     }
                     _ => {}
                 }
