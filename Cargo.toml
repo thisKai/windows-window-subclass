@@ -22,3 +22,4 @@ features = [
 
 [dev-dependencies]
 winit = "0.21"
+minifb = "0.15"
