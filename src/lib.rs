@@ -1,5 +1,6 @@
 #[cfg(windows)]
 mod subclass;
+mod metrics;
 #[cfg(feature = "unstable")]
 mod extend_frame;
 #[cfg(feature = "unstable")]
@@ -11,11 +12,13 @@ mod hit_test;
 pub use subclass::subclass_win32_window;
 #[cfg(feature = "unstable")]
 pub use {
-    extend_frame::{
-        ExtendFrame,
-        Margins,
+    metrics::{
         window_frame_metrics,
         WindowFrameMetrics,
+        Margins,
+    },
+    extend_frame::{
+        ExtendFrame,
     },
     client_area::ClientArea,
     hit_test::HitTest,
