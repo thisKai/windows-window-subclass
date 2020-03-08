@@ -1,6 +1,5 @@
 use {
-    windows_custom_window::{subclass_window, ExtendFrame, ClientArea, HitTest, Margins},
-    std::rc::Rc,
+    windows_custom_window::{SetSubclass, ExtendFrame, ClientArea, HitTest, Margins},
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
@@ -15,13 +14,14 @@ fn main() {
         .with_transparent(true)
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
-        .unwrap();
-    subclass_window(&window, ExtendFrame::sheet());
-    subclass_window(&window, ClientArea::margins(Margins {
-        top: 31,
-        ..Default::default()
-    }));
-    subclass_window(&window, HitTest::extend_titlebar(31));
+        .unwrap()
+        .with_subclass(ExtendFrame::sheet())
+        .with_subclass(ClientArea::margins(Margins {
+            top: 31,
+            ..Default::default()
+        }))
+        .with_subclass(HitTest::extend_titlebar(31));
+
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {

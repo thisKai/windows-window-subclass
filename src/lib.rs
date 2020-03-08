@@ -58,15 +58,24 @@ impl<T: Deref> WindowSubclass for T where T::Target: WindowSubclass {
     }
 }
 
-pub fn subclass_window<W: HasRawWindowHandle, S: WindowSubclass>(window: &W, subclass: S) {
-    #[cfg(windows)]
-    {
-        use raw_window_handle::{
-            RawWindowHandle,
-            windows::WindowsHandle,
-        };
-        if let RawWindowHandle::Windows(WindowsHandle { hwnd, .. }) = window.raw_window_handle() {
-            subclass_win32_window(hwnd as _, subclass);
+pub trait SetSubclass {
+    fn set_subclass<S: WindowSubclass>(&self, subclass: S);
+    fn with_subclass<S: WindowSubclass>(self, subclass: S) -> Self where Self: Sized {
+        self.set_subclass(subclass);
+        self
+    }
+}
+impl<W: HasRawWindowHandle> SetSubclass for W {
+    fn set_subclass<S: WindowSubclass>(&self, subclass: S) {
+        #[cfg(windows)]
+        {
+            use raw_window_handle::{
+                RawWindowHandle,
+                windows::WindowsHandle,
+            };
+            if let RawWindowHandle::Windows(WindowsHandle { hwnd, .. }) = self.raw_window_handle() {
+                subclass_win32_window(hwnd as _, subclass);
+            }
         }
     }
 }
