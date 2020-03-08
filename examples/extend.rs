@@ -1,5 +1,5 @@
 use {
-    windows_window_subclass::{SetSubclass, ExtendFrame, Margins},
+    windows_window_subclass::{SetSubclass, DwmFrame, Margins},
     std::rc::Rc,
     winit::{
         event::{Event, WindowEvent},
@@ -10,7 +10,7 @@ use {
 
 fn main() {
     let event_loop = EventLoop::new();
-    let subclass = Rc::new(ExtendFrame::sheet());
+    let subclass = Rc::new(DwmFrame::sheet());
     let window = WindowBuilder::new()
         .with_visible(false)
         .with_transparent(true)

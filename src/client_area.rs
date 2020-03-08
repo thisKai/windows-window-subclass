@@ -22,7 +22,7 @@ pub struct ClientArea {
     margins: Cell<Margins>,
 }
 impl ClientArea {
-    pub fn margins(margins: Margins) -> Self {
+    pub fn extend(margins: Margins) -> Self {
         Self {
             h_wnd: Cell::new(None),
             margins: Cell::new(margins),

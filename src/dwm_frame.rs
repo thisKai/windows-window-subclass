@@ -22,19 +22,19 @@ use winapi::{
 };
 
 #[derive(Default)]
-pub struct ExtendFrame {
+pub struct DwmFrame {
     h_wnd: Cell<Option<HWND>>,
     margins: Cell<Margins>,
 }
-impl ExtendFrame {
-    pub fn margins(margins: Margins) -> Self {
+impl DwmFrame {
+    pub fn extend(margins: Margins) -> Self {
         Self {
             h_wnd: Cell::new(None),
             margins: Cell::new(margins),
         }
     }
     pub fn sheet() -> Self {
-        Self::margins(Margins::sheet())
+        Self::extend(Margins::sheet())
     }
     pub fn set_margins(&self, margins: Margins) {
         self.margins.set(margins);
@@ -46,7 +46,7 @@ impl ExtendFrame {
         }
     }
 }
-impl WindowSubclass for ExtendFrame {
+impl WindowSubclass for DwmFrame {
     #[cfg(windows)]
     fn wnd_proc(
         &self,

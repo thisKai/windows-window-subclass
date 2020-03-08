@@ -1,7 +1,7 @@
 use {
     windows_window_subclass::{
         SetSubclass,
-        ExtendFrame,
+        DwmFrame,
         ClientArea,
         HitTest,
         Margins,
@@ -24,11 +24,11 @@ fn main() {
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
         .unwrap()
-        .with_subclass(ExtendFrame::margins(Margins {
+        .with_subclass(DwmFrame::extend(Margins {
             top: metrics.titlebar,
             ..Default::default()
         }))
-        .with_subclass(ClientArea::margins(Margins {
+        .with_subclass(ClientArea::extend(Margins {
             top: metrics.titlebar,
             ..Default::default()
         }))

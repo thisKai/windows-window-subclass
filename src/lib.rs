@@ -2,7 +2,7 @@
 mod subclass;
 mod metrics;
 #[cfg(feature = "unstable")]
-mod extend_frame;
+mod dwm_frame;
 #[cfg(feature = "unstable")]
 mod client_area;
 #[cfg(feature = "unstable")]
@@ -17,9 +17,7 @@ pub use {
         WindowFrameMetrics,
         Margins,
     },
-    extend_frame::{
-        ExtendFrame,
-    },
+    dwm_frame::DwmFrame,
     client_area::ClientArea,
     hit_test::HitTest,
 };
