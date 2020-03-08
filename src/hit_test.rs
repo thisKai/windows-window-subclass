@@ -35,7 +35,6 @@ impl HitTest {
     unsafe fn hit_test(&self, h_wnd: HWND, l_param: LPARAM) -> LRESULT {
         let window = window_rect(h_wnd);
         let frame = window_frame_rect();
-        dbg!(&frame.top);
         let POINT { y, .. } = pointer_location(l_param);
 
         if y >= window.top && y < window.top + self.titlebar_height.get() {
