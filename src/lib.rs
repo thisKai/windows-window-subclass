@@ -6,6 +6,8 @@ mod custom_window;
 mod extend_frame;
 #[cfg(feature = "unstable")]
 mod client_area;
+#[cfg(feature = "unstable")]
+mod hit_test;
 
 #[cfg(windows)]
 pub use subclass::subclass_win32_window;
@@ -14,6 +16,7 @@ pub use {
     custom_window::CustomWindow,
     extend_frame::{ExtendFrame, Margins},
     client_area::ClientArea,
+    hit_test::HitTest,
 };
 
 use std::ops::Deref;

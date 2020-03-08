@@ -112,7 +112,7 @@ unsafe fn frame_change(h_wnd: HWND) {
 }
 
 #[cfg(windows)]
-unsafe fn window_rect(h_wnd: HWND) -> RECT {
+pub(crate) unsafe fn window_rect(h_wnd: HWND) -> RECT {
     let mut rect = RECT {
         left: 0,
         top: 0,
