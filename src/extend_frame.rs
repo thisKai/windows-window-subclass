@@ -152,6 +152,6 @@ pub fn window_frame_metrics() -> Result<WindowFrameMetrics, &'static str> {
 
 #[derive(Debug, Default, Copy, Clone)]
 pub struct WindowFrameMetrics {
-    titlebar: i32,
-    border: Margins,
+    pub titlebar: i32,
+    pub border: Margins,
 }
