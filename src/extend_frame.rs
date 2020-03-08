@@ -102,6 +102,7 @@ impl Margins {
             bottom: -1,
         }
     }
+    #[cfg(windows)]
     pub(crate) fn winapi(&self) -> MARGINS {
         MARGINS {
             cxLeftWidth: self.left,
