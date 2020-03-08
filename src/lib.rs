@@ -1,8 +1,6 @@
 #[cfg(windows)]
 mod subclass;
 #[cfg(feature = "unstable")]
-mod custom_window;
-#[cfg(feature = "unstable")]
 mod extend_frame;
 #[cfg(feature = "unstable")]
 mod client_area;
@@ -13,7 +11,6 @@ mod hit_test;
 pub use subclass::subclass_win32_window;
 #[cfg(feature = "unstable")]
 pub use {
-    custom_window::CustomWindow,
     extend_frame::{
         ExtendFrame,
         Margins,
