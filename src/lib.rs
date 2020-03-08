@@ -28,6 +28,7 @@ use std::ops::Deref;
 #[cfg(windows)]
 use {
     winapi::shared::{
+        basetsd::*,
         minwindef::*,
         windef::*,
     },
@@ -44,7 +45,7 @@ pub trait WindowSubclass {
         l_param: LPARAM,
     ) -> LRESULT;
     #[cfg(windows)]
-    fn init(&self, h_wnd: HWND) {}
+    fn init(&self, _h_wnd: HWND, _u_id_subclass: UINT_PTR) {}
 }
 impl<T: Deref> WindowSubclass for T where T::Target: WindowSubclass {
     #[cfg(windows)]
@@ -58,8 +59,8 @@ impl<T: Deref> WindowSubclass for T where T::Target: WindowSubclass {
         self.deref().wnd_proc(h_wnd, message, w_param, l_param)
     }
     #[cfg(windows)]
-    fn init(&self, h_wnd: HWND) {
-        self.deref().init(h_wnd)
+    fn init(&self, h_wnd: HWND, u_id_subclass: UINT_PTR) {
+        self.deref().init(h_wnd, u_id_subclass)
     }
 }
 

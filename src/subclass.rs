@@ -18,7 +18,7 @@ pub fn subclass_win32_window<S: WindowSubclass>(h_wnd: HWND, subclass: S) {
         SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), SUBCLASS_ID, data as usize);
 
         let data = &mut **data;
-        data.init(h_wnd);
+        data.init(h_wnd, SUBCLASS_ID);
         SUBCLASS_ID += 1;
     }
 }

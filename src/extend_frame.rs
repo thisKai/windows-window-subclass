@@ -6,6 +6,7 @@ use {
 use winapi::{
     shared::{
         winerror::*,
+        basetsd::*,
         ntdef::NULL,
         minwindef::*,
         windef::*,
@@ -68,7 +69,7 @@ impl WindowSubclass for ExtendFrame {
         }
     }
     #[cfg(windows)]
-    fn init(&self, h_wnd: HWND) {
+    fn init(&self, h_wnd: HWND, _u_id_subclass: UINT_PTR) {
         self.h_wnd.set(Some(h_wnd));
         unsafe {
             extend_frame(h_wnd, &self.margins.get().winapi());

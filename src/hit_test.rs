@@ -5,6 +5,7 @@ use {
 #[cfg(windows)]
 use winapi::{
     shared::{
+        basetsd::*,
         ntdef::NULL,
         minwindef::*,
         windef::*,
@@ -83,7 +84,7 @@ impl WindowSubclass for HitTest {
         }
     }
     #[cfg(windows)]
-    fn init(&self, h_wnd: HWND) {
+    fn init(&self, h_wnd: HWND, _u_id_subclass: UINT_PTR) {
         self.h_wnd.set(Some(h_wnd));
     }
 }

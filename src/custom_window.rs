@@ -3,6 +3,7 @@ use super::WindowSubclass;
 use winapi::{
     shared::{
         winerror::*,
+        basetsd::*,
         ntdef::NULL,
         minwindef::*,
         windef::*,
@@ -50,7 +51,7 @@ impl WindowSubclass for CustomWindow {
             let mut f_call_dwp = true;
             let mut f_dwm_enabled = FALSE;
             let mut l_ret = 0;
-        
+
             // Winproc worker for custom frame issues.
             let hr = DwmIsCompositionEnabled(&mut f_dwm_enabled);
             if SUCCEEDED(hr) {
@@ -62,7 +63,7 @@ impl WindowSubclass for CustomWindow {
                     &mut f_call_dwp,
                 );
             }
-        
+
             // Winproc worker for the rest of the application.
             if f_call_dwp {
                 l_ret = DefSubclassProc(h_wnd, message, w_param, l_param);
@@ -71,7 +72,7 @@ impl WindowSubclass for CustomWindow {
         }
     }
     #[cfg(windows)]
-    fn init(&self, h_wnd: HWND) {
+    fn init(&self, h_wnd: HWND, _u_id_subclass: UINT_PTR) {
         unsafe {
             extend_frame(h_wnd, &self.margins);
             frame_change(h_wnd);
@@ -182,7 +183,7 @@ impl CustomWindow {
         let frame = window_frame_rect();
         dbg!(&frame.top);
         let POINT { y, .. } = pointer_location(l_param);
-    
+
         if y >= window.top && y < window.top + self.margins.cyTopHeight {
             if y < (window.top - frame.top) {
                 HTTOP
