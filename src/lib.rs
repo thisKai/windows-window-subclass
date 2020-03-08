@@ -8,8 +8,6 @@ mod client_area;
 mod hit_test;
 
 #[cfg(windows)]
-pub use subclass::subclass_win32_window;
-#[cfg(feature = "unstable")]
 pub use {
     metrics::{
         window_frame_metrics,
@@ -17,6 +15,10 @@ pub use {
         Margins,
     },
     dwm_frame::DwmFrame,
+    subclass::subclass_win32_window,
+};
+#[cfg(feature = "unstable")]
+pub use {
     client_area::ClientArea,
     hit_test::HitTest,
 };
