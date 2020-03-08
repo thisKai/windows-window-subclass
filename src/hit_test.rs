@@ -13,6 +13,7 @@ use winapi::{
     um::{
         winuser::*,
         commctrl::DefSubclassProc,
+        dwmapi::DwmDefWindowProc,
     },
 };
 
@@ -58,19 +59,28 @@ impl WindowSubclass for HitTest {
         l_param: LPARAM,
     ) -> LRESULT {
         unsafe {
+            let mut hit_test = 0;
+
+            // Pass on to DefWindowProc?
+            let mut call_dwp = DwmDefWindowProc(h_wnd, message, w_param, l_param, &mut hit_test) != TRUE;
+
             let default_ret = DefSubclassProc(h_wnd, message, w_param, l_param);
 
-            if message == WM_NCHITTEST {
-                let hit_test = match default_ret {
+            if message == WM_NCHITTEST && hit_test == 0 {
+                hit_test = match default_ret {
                     HTCLIENT => self.hit_test(h_wnd, l_param),
                     value => value,
                 };
 
                 if hit_test != HTNOWHERE {
-                    return hit_test;
+                    call_dwp = false;
                 }
             }
-            default_ret
+            if call_dwp {
+                default_ret
+            } else {
+                hit_test
+            }
         }
     }
     #[cfg(windows)]

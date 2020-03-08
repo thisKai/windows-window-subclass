@@ -1,5 +1,5 @@
 use {
-    windows_custom_window::{subclass_window, ExtendFrame, ClientArea, Margins},
+    windows_custom_window::{subclass_window, ExtendFrame, ClientArea, HitTest, Margins},
     std::rc::Rc,
     winit::{
         event::{Event, WindowEvent},
@@ -18,10 +18,6 @@ fn main() {
         .unwrap();
     let subclass = Rc::new(ExtendFrame::sheet());
     subclass_window(&window, subclass.clone());
-    subclass_window(&window, ClientArea::margins(Margins {
-        top: 31,
-        ..Default::default()
-    }));
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {

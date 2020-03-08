@@ -11,13 +11,15 @@ use {
 };
 
 pub fn subclass_win32_window<S: WindowSubclass>(h_wnd: HWND, subclass: S) {
+    static mut SUBCLASS_ID: UINT_PTR = 0;
     let data: Box<Box<dyn WindowSubclass>> = Box::new(Box::new(subclass));
     let data = Box::into_raw(data);
     unsafe {
-        SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), 0, data as usize);
-        
+        SetWindowSubclass(h_wnd, Some(subclass_wnd_proc), SUBCLASS_ID, data as usize);
+
         let data = &mut **data;
         data.init(h_wnd);
+        SUBCLASS_ID += 1;
     }
 }
 

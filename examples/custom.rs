@@ -1,9 +1,10 @@
 use {
-    windows_custom_window::{subclass_window, CustomWindow},
+    windows_custom_window::{subclass_window, ExtendFrame, ClientArea, HitTest, Margins},
+    std::rc::Rc,
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
-        window::{WindowBuilder},
+        window::WindowBuilder,
     },
 };
 
@@ -15,7 +16,12 @@ fn main() {
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
         .unwrap();
-    subclass_window(&window, CustomWindow::default());
+    subclass_window(&window, ExtendFrame::sheet());
+    subclass_window(&window, ClientArea::margins(Margins {
+        top: 31,
+        ..Default::default()
+    }));
+    subclass_window(&window, HitTest::extend_titlebar(31));
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
@@ -23,9 +29,14 @@ fn main() {
 
         match event {
             Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
+                event,
                 window_id,
-            } if window_id == window.id() => *control_flow = ControlFlow::Exit,
+            } if window_id == window.id() => match event {
+                WindowEvent::CloseRequested => {
+                    *control_flow = ControlFlow::Exit
+                },
+                _ => (),
+            }
             _ => (),
         }
     });

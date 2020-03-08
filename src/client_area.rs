@@ -47,8 +47,6 @@ impl WindowSubclass for ClientArea {
             // Handle window creation.
             if message == WM_CREATE {
                 frame_change(h_wnd);
-
-                return DefSubclassProc(h_wnd, message, w_param, l_param);
             }
 
             // Handle the non-client size message.
@@ -66,10 +64,7 @@ impl WindowSubclass for ClientArea {
                         pncsp.rgrc[0].right  += margins.right;
                         pncsp.rgrc[0].bottom += margins.bottom;
 
-                        return WVR_VALIDRECTS;
-
-                        // No need to pass the message on to the DefWindowProc.
-                        // f_call_dwp = false;
+                        // return WVR_VALIDRECTS;
                     }
                     FALSE => {
                         let rc = l_param as *mut RECT;
