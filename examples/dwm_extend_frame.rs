@@ -1,9 +1,9 @@
 use {
-    winit_windows_custom_window::subclass_window,
+    windows_window_subclass::{SetSubclass, DwmFrame},
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
-        window::{WindowBuilder},
+        window::WindowBuilder,
     },
 };
 
@@ -14,8 +14,8 @@ fn main() {
         .with_transparent(true)
         // .with_no_redirection_bitmap(true)
         .build(&event_loop)
-        .unwrap();
-    subclass_window(&window);
+        .unwrap()
+        .with_subclass(DwmFrame::sheet());
     window.set_visible(true);
 
     event_loop.run(move |event, _, control_flow| {
@@ -23,9 +23,14 @@ fn main() {
 
         match event {
             Event::WindowEvent {
-                event: WindowEvent::CloseRequested,
+                event,
                 window_id,
-            } if window_id == window.id() => *control_flow = ControlFlow::Exit,
+            } if window_id == window.id() => match event {
+                WindowEvent::CloseRequested => {
+                    *control_flow = ControlFlow::Exit
+                },
+                _ => (),
+            }
             _ => (),
         }
     });
