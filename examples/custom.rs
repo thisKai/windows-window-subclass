@@ -1,5 +1,12 @@
 use {
-    windows_custom_window::{SetSubclass, ExtendFrame, ClientArea, HitTest, Margins},
+    windows_custom_window::{
+        SetSubclass,
+        ExtendFrame,
+        ClientArea,
+        HitTest,
+        Margins,
+        window_frame_metrics,
+    },
     winit::{
         event::{Event, WindowEvent},
         event_loop::{ControlFlow, EventLoop},
@@ -9,6 +16,8 @@ use {
 
 fn main() {
     let event_loop = EventLoop::new();
+
+    let metrics = window_frame_metrics().unwrap_or_default();
     let window = WindowBuilder::new()
         .with_visible(false)
         .with_transparent(true)
@@ -16,14 +25,14 @@ fn main() {
         .build(&event_loop)
         .unwrap()
         .with_subclass(ExtendFrame::margins(Margins {
-            top: 31,
+            top: metrics.titlebar,
             ..Default::default()
         }))
         .with_subclass(ClientArea::margins(Margins {
-            top: 31,
+            top: metrics.titlebar,
             ..Default::default()
         }))
-        .with_subclass(HitTest::extend_titlebar(31));
+        .with_subclass(HitTest::extend_titlebar(metrics.titlebar));
 
     window.set_visible(true);
 
