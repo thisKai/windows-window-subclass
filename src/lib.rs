@@ -14,7 +14,12 @@ pub use subclass::subclass_win32_window;
 #[cfg(feature = "unstable")]
 pub use {
     custom_window::CustomWindow,
-    extend_frame::{ExtendFrame, Margins},
+    extend_frame::{
+        ExtendFrame,
+        Margins,
+        window_frame_metrics,
+        WindowFrameMetrics,
+    },
     client_area::ClientArea,
     hit_test::HitTest,
 };
