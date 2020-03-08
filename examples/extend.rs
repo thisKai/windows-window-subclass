@@ -1,5 +1,5 @@
 use {
-    windows_custom_window::{SetSubclass, ExtendFrame, Margins},
+    windows_window_subclass::{SetSubclass, ExtendFrame, Margins},
     std::rc::Rc,
     winit::{
         event::{Event, WindowEvent},

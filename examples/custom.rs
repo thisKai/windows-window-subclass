@@ -1,5 +1,5 @@
 use {
-    windows_custom_window::{
+    windows_window_subclass::{
         SetSubclass,
         ExtendFrame,
         ClientArea,
