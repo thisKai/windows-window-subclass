@@ -1,7 +1,6 @@
 #[cfg(windows)]
 mod subclass;
 mod metrics;
-#[cfg(feature = "unstable")]
 mod dwm_frame;
 #[cfg(feature = "unstable")]
 mod client_area;
