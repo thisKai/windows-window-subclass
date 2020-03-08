@@ -20,4 +20,4 @@ features = [
 ]
 
 [dev-dependencies]
-winit = "*"
+winit = "0.21"
