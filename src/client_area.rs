@@ -16,6 +16,9 @@ use winapi::{
     },
 };
 
+#[cfg(not(windows))]
+type HWND = ();
+
 #[derive(Default)]
 pub struct ClientArea {
     h_wnd: Cell<Option<HWND>>,
@@ -30,6 +33,7 @@ impl ClientArea {
     }
     pub fn set_margins(&self, margins: Margins) {
         self.margins.set(margins);
+        #[cfg(windows)]
         unsafe {
             frame_change(self.h_wnd.get().unwrap());
         }

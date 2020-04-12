@@ -1,5 +1,5 @@
 use {
-    super::{WindowSubclass, client_area::window_rect},
+    super::WindowSubclass,
     std::cell::Cell,
 };
 #[cfg(windows)]
@@ -18,6 +18,9 @@ use winapi::{
     },
 };
 
+#[cfg(not(windows))]
+type HWND = ();
+
 #[derive(Default)]
 pub struct HitTest {
     h_wnd: Cell<Option<HWND>>,
@@ -33,7 +36,10 @@ impl HitTest {
     pub fn set_titlebar_height(&self, titlebar_height: i32) {
         self.titlebar_height.set(titlebar_height);
     }
+    #[cfg(windows)]
     unsafe fn hit_test(&self, h_wnd: HWND, l_param: LPARAM) -> LRESULT {
+        use super::client_area::window_rect;
+
         let window = window_rect(h_wnd);
         let frame = window_frame_rect();
         let POINT { y, .. } = pointer_location(l_param);

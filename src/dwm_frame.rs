@@ -21,7 +21,9 @@ use winapi::{
     },
 };
 
-#[derive(Default)]
+#[cfg(not(windows))]
+type HWND = ();
+
 pub struct DwmFrame {
     h_wnd: Cell<Option<HWND>>,
     margins: Cell<Margins>,
@@ -29,6 +31,7 @@ pub struct DwmFrame {
 impl DwmFrame {
     pub fn extend(margins: Margins) -> Self {
         Self {
+            #[cfg(not(windows))]
             h_wnd: Cell::new(None),
             margins: Cell::new(margins),
         }
@@ -38,6 +41,7 @@ impl DwmFrame {
     }
     pub fn set_margins(&self, margins: Margins) {
         self.margins.set(margins);
+        #[cfg(windows)]
         unsafe {
             extend_frame(
                 self.h_wnd.get().unwrap(),
