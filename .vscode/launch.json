@@ -1,0 +1,178 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'windows-window-subclass'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=windows-window-subclass",
+                    "--features=unstable"
+                ],
+                "filter": {
+                    "name": "windows-window-subclass",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'custom'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=custom",
+                    "--package=windows-window-subclass",
+                    "--features=unstable"
+                ],
+                "filter": {
+                    "name": "custom",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'custom'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=custom",
+                    "--package=windows-window-subclass",
+                    "--features=unstable"
+                ],
+                "filter": {
+                    "name": "custom",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'dwm_extend_frame_winit'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=dwm_extend_frame_winit",
+                    "--package=windows-window-subclass"
+                ],
+                "filter": {
+                    "name": "dwm_extend_frame_winit",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'dwm_extend_frame_winit'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=dwm_extend_frame_winit",
+                    "--package=windows-window-subclass"
+                ],
+                "filter": {
+                    "name": "dwm_extend_frame_winit",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'change_at_runtime'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=change_at_runtime",
+                    "--package=windows-window-subclass"
+                ],
+                "filter": {
+                    "name": "change_at_runtime",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'change_at_runtime'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=change_at_runtime",
+                    "--package=windows-window-subclass"
+                ],
+                "filter": {
+                    "name": "change_at_runtime",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'dwm_extend_frame_minifb'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=dwm_extend_frame_minifb",
+                    "--package=windows-window-subclass"
+                ],
+                "filter": {
+                    "name": "dwm_extend_frame_minifb",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'dwm_extend_frame_minifb'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=dwm_extend_frame_minifb",
+                    "--package=windows-window-subclass"
+                ],
+                "filter": {
+                    "name": "dwm_extend_frame_minifb",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
