@@ -31,7 +31,6 @@ pub struct DwmFrame {
 impl DwmFrame {
     pub fn extend(margins: Margins) -> Self {
         Self {
-            #[cfg(not(windows))]
             h_wnd: Cell::new(None),
             margins: Cell::new(margins),
         }
